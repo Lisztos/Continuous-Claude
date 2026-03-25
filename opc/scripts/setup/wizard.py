@@ -860,6 +860,10 @@ async def run_setup_wizard() -> None:
     shell_config, shell_type = get_shell_config()
 
     opc_dir = _project_root  # Use script location, not cwd (robust if invoked from elsewhere)
+    # Ensure fish config directory exists (fish creates it lazily)
+    if shell_config and shell_type == "fish" and not shell_config.exists():
+        shell_config.parent.mkdir(parents=True, exist_ok=True)
+        shell_config.touch()
     if shell_config and shell_config.exists():
         content = shell_config.read_text()
         if shell_type == "fish":
@@ -1219,6 +1223,10 @@ async def run_setup_wizard() -> None:
             console.print("  Setting LOOGLE_HOME environment variable...")
             shell_config, shell_type = get_shell_config()
 
+            # Ensure fish config directory exists (fish creates it lazily)
+            if shell_config and shell_type == "fish" and not shell_config.exists():
+                shell_config.parent.mkdir(parents=True, exist_ok=True)
+                shell_config.touch()
             if shell_config and shell_config.exists():
                 content = shell_config.read_text()
                 if shell_type == "fish":
@@ -1274,8 +1282,10 @@ async def run_setup_wizard() -> None:
         console.print("Core features like memory and learnings may not function correctly until set.")
         console.print("\nTo fix this:")
 
-        shell_config, _ = get_shell_config()
-        if shell_config:
+        shell_config, shell_type = get_shell_config()
+        if shell_config and shell_type == "fish":
+            console.print(f"  1. Run: [bold]. {shell_config}[/bold]  (or restart your terminal)")
+        elif shell_config:
             console.print(f"  1. Run: [bold]source {shell_config}[/bold]")
         else:
             console.print("  1. Restart your terminal session")
