@@ -167,8 +167,8 @@ ACTION: Use Skill tool BEFORE responding
 
 ```bash
 # Clone
-git clone https://github.com/parcadei/Continuous-Claude-v3.git
-cd Continuous-Claude-v3/opc
+git clone https://github.com/Lisztos/Continuous-Claude.git
+cd Continuous-Claude/opc
 
 # Run setup wizard (12 steps)
 uv run python -m scripts.setup.wizard
@@ -193,7 +193,7 @@ uv run python -m scripts.setup.wizard
 #### To Uninstall:
 
 ```
-cd Continuous-Claude-v3/opc
+cd Continuous-Claude/opc
   uv run python -m scripts.setup.wizard --uninstall
 ```
 
@@ -1015,8 +1015,8 @@ Blocks on HIGH severity until user accepts/mitigates risks.
 
 ```bash
 # Clone
-git clone https://github.com/parcadei/Continuous-Claude-v3.git
-cd Continuous-Claude-v3/opc
+git clone https://github.com/Lisztos/Continuous-Claude.git
+cd Continuous-Claude/opc
 
 # Run the setup wizard
 uv run python -m scripts.setup.wizard
@@ -1279,7 +1279,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on:
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=parcadei/Continuous-Claude-v3&type=timeline)](https://star-history.com/#parcadei/Continuous-Claude-v3&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=Lisztos/Continuous-Claude&type=timeline)](https://star-history.com/#Lisztos/Continuous-Claude&Date)
 
 ---
 
