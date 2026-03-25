@@ -37,11 +37,11 @@ function getLockPath(projectDir: string): string {
 
 /**
  * Get PID file path for daemon.
+ * The Python TLDR daemon writes its PID to .tldr/daemon.pid inside the project directory.
  */
 function getPidPath(projectDir: string): string {
   const resolvedPath = resolveProjectDir(projectDir);
-  const hash = crypto.createHash('md5').update(resolvedPath).digest('hex').substring(0, 8);
-  return `${tmpdir()}/tldr-${hash}.pid`;
+  return join(resolvedPath, '.tldr', 'daemon.pid');
 }
 
 /**
@@ -59,8 +59,11 @@ function isDaemonProcessRunning(projectDir: string): boolean {
     // kill(pid, 0) checks if process exists without sending signal
     process.kill(pid, 0);
     return true;  // Process exists
-  } catch {
-    return false;  // Process doesn't exist or permission denied
+  } catch (e: any) {
+    if (e.code === 'EPERM') return true;  // Process alive, different permissions
+    // ESRCH or other error — stale PID file, clean it up
+    try { unlinkSync(pidPath); } catch {}
+    return false;
   }
 }
 

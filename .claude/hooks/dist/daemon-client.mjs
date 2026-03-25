@@ -1,6 +1,6 @@
 // src/daemon-client.ts
 import { existsSync, readFileSync, writeFileSync, unlinkSync } from "fs";
-import { execSync, spawnSync } from "child_process";
+import { execSync, spawn } from "child_process";
 import { join, resolve } from "path";
 import { tmpdir } from "os";
 import * as net from "net";
@@ -15,8 +15,7 @@ function getLockPath(projectDir) {
 }
 function getPidPath(projectDir) {
   const resolvedPath = resolveProjectDir(projectDir);
-  const hash = crypto.createHash("md5").update(resolvedPath).digest("hex").substring(0, 8);
-  return `${tmpdir()}/tldr-${hash}.pid`;
+  return join(resolvedPath, ".tldr", "daemon.pid");
 }
 function isDaemonProcessRunning(projectDir) {
   const pidPath = getPidPath(projectDir);
@@ -26,7 +25,12 @@ function isDaemonProcessRunning(projectDir) {
     if (isNaN(pid) || pid <= 0) return false;
     process.kill(pid, 0);
     return true;
-  } catch {
+  } catch (e) {
+    if (e.code === "EPERM") return true;
+    try {
+      unlinkSync(pidPath);
+    } catch {
+    }
     return false;
   }
 }
@@ -165,18 +169,32 @@ function tryStartDaemon(projectDir) {
       const tldrPath = join(projectDir, "opc", "packages", "tldr-code");
       let started = false;
       if (existsSync(tldrPath)) {
-        const result = spawnSync("uv", ["run", "tldr", "daemon", "start", "--project", projectDir], {
-          timeout: 1e4,
-          stdio: "ignore",
-          cwd: tldrPath
-        });
-        started = result.status === 0;
+        try {
+          execSync("uv --version", { stdio: "ignore", timeout: 2e3 });
+          const child = spawn("uv", ["run", "tldr", "daemon", "start", "--project", projectDir], {
+            detached: true,
+            stdio: "ignore",
+            windowsHide: true,
+            cwd: tldrPath
+          });
+          child.on("error", () => {
+          });
+          if (child.pid !== void 0) {
+            child.unref();
+            started = true;
+          }
+        } catch {
+        }
       }
       if (!started && !process.env.TLDR_DEV) {
-        spawnSync("tldr", ["daemon", "start", "--project", projectDir], {
-          timeout: 5e3,
-          stdio: "ignore"
+        const child = spawn("tldr", ["daemon", "start", "--project", projectDir], {
+          detached: true,
+          stdio: "ignore",
+          windowsHide: true
         });
+        child.on("error", () => {
+        });
+        child.unref();
       }
       const start = Date.now();
       while (Date.now() - start < 1e4) {
@@ -188,6 +206,23 @@ function tryStartDaemon(projectDir) {
         }
         const end = Date.now() + 100;
         while (Date.now() < end) {
+        }
+      }
+      if (started && !isDaemonProcessRunning(projectDir) && !isDaemonReachable(projectDir) && !process.env.TLDR_DEV) {
+        const child = spawn("tldr", ["daemon", "start", "--project", projectDir], {
+          detached: true,
+          stdio: "ignore",
+          windowsHide: true
+        });
+        child.on("error", () => {
+        });
+        child.unref();
+        const lrStart = Date.now();
+        while (Date.now() - lrStart < 3e3) {
+          if (isDaemonReachable(projectDir)) break;
+          const wait = Date.now() + 100;
+          while (Date.now() < wait) {
+          }
         }
       }
       return isDaemonReachable(projectDir);
