@@ -639,7 +639,7 @@ async def run_setup_wizard() -> None:
     if Confirm.ask("Configure API keys?", default=False):
         api_keys = await prompt_api_keys()
     else:
-        api_keys = {"perplexity": "", "nia": "", "braintrust": ""}
+        api_keys = {"perplexity": "", "nia": "", "braintrust": "", "morph": ""}
 
     # Step 5: Generate .env
     console.print("\n[bold]Step 5/13: Generating configuration...[/bold]")
