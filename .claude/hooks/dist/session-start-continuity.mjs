@@ -169,7 +169,8 @@ function ensureMemoryDaemon() {
         try {
           process.kill(pid, 0);
           return null;
-        } catch {
+        } catch (e) {
+          if (e.code === "EPERM") return null;
         }
       }
     } catch {

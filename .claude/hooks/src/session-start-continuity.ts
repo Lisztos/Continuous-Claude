@@ -329,8 +329,9 @@ function ensureMemoryDaemon(): string | null {
         try {
           process.kill(pid, 0);
           return null; // Already running
-        } catch {
-          // Process not found — stale PID file
+        } catch (e: any) {
+          if (e.code === 'EPERM') return null; // Process alive, different permissions
+          // ESRCH: Process not found — stale PID file, continue to restart
         }
       }
     } catch {
