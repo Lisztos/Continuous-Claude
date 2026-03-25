@@ -1385,7 +1385,7 @@ async def run_uninstall_wizard() -> None:
     console.print("\n[bold]Additional cleanup:[/bold]")
 
     # Remove CLAUDE_OPC_DIR from shell config
-    for shell_config in [Path.home() / ".zshrc", Path.home() / ".bashrc"]:
+    for shell_config in [Path.home() / ".zshrc", Path.home() / ".bashrc", Path.home() / ".config" / "fish" / "config.fish"]:
         if shell_config.exists():
             content = shell_config.read_text()
             if "CLAUDE_OPC_DIR" in content:
