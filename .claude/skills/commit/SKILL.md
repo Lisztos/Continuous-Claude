@@ -9,27 +9,40 @@ You are tasked with creating git commits for the changes made during this sessio
 
 ## Process:
 
-1. **Think about what changed:**
-   - Review the conversation history and understand what was accomplished
-   - Run `git status` to see current changes
-   - Run `git diff` to understand the modifications
-   - Consider whether changes should be one commit or multiple logical commits
+1. **Analyze all changes:**
+   - Run `git status` and `git diff` to see everything
+   - Review conversation history to understand what was accomplished and why
 
-2. **Plan your commit(s):**
-   - Identify which files belong together
-   - Draft clear, descriptive commit messages
-   - Use imperative mood in commit messages
-   - Focus on why the changes were made, not just what
+2. **Group changes into logical commits:**
+   - **Always prefer multiple small, focused commits** over one large commit
+   - Group by logical unit of work, not by file type
+   - Each commit should represent one coherent change that could stand alone
+   - Grouping heuristics:
+     - Bug fix + its test → one commit
+     - New feature + its test → one commit
+     - Refactor that enables a feature → separate commit before the feature
+     - Config/dependency changes → separate commit
+     - Documentation updates → separate commit
+     - Unrelated fixes → separate commits
+   - Only combine everything into one commit if all changes are truly part of a single atomic change
 
 3. **Present your plan to the user:**
-   - List the files you plan to add for each commit
-   - Show the commit message(s) you'll use
-   - Ask: "I plan to create [N] commit(s) with these changes. Shall I proceed?"
+   - List each planned commit with its files and message
+   - Format:
+     ```
+     Commit 1: <message>
+       - file_a.py
+       - file_b.py
+     Commit 2: <message>
+       - file_c.py
+     ```
+   - Ask: "I plan to create [N] commit(s). Shall I proceed?"
 
-4. **Execute upon confirmation:**
-   - Use `git add` with specific files (never use `-A` or `.`)
-   - Create commits with your planned messages
-   - Show the result with `git log --oneline -n [number]`
+4. **Execute upon confirmation (in order):**
+   - For each commit: `git add <specific files>` then `git commit`
+   - Use imperative mood in messages, focus on *why* not *what*
+   - Never use `git add -A` or `git add .`
+   - Show final result with `git log --oneline -n [number of commits]`
 
 5. **Generate reasoning (after each commit):**
    - Run: `bash "$CLAUDE_CC_DIR/.claude/scripts/generate-reasoning.sh" <commit-hash> "<commit-message>"`
