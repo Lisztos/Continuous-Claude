@@ -895,6 +895,24 @@ async def run_setup_wizard() -> None:
             with open(shell_config, "a") as f:
                 f.write(f"\n# Continuous-Claude root directory\n{export_cc}\n")
             changed = True
+        else:
+            # Update stale paths if repo was moved/renamed
+            lines = content.splitlines(keepends=True)
+            new_lines = []
+            updated = False
+            for line in lines:
+                if "CLAUDE_OPC_DIR" in line and export_opc not in line:
+                    new_lines.append(export_opc + "\n")
+                    updated = True
+                elif "CLAUDE_CC_DIR" in line and export_cc not in line:
+                    new_lines.append(export_cc + "\n")
+                    updated = True
+                else:
+                    new_lines.append(line)
+            if updated:
+                shell_config.write_text("".join(new_lines))
+                changed = True
+                console.print(f"  [green]OK[/green] Updated CLAUDE_OPC_DIR/CLAUDE_CC_DIR paths in {shell_config.name}")
         if changed:
             console.print(f"  [green]OK[/green] Added CLAUDE_OPC_DIR and CLAUDE_CC_DIR to {shell_config.name}")
         else:

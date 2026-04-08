@@ -19,7 +19,7 @@ Thank you for your interest in contributing! This guide covers how to add skills
 
 ```bash
 # Clone (your fork) of the repository
-cd Continuous-Claude-v3/opc
+cd Continuous-Claude/opc
 
 # Install Python dependencies
 uv sync
