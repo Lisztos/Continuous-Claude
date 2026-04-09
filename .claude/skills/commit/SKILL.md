@@ -40,9 +40,40 @@ You are tasked with creating git commits for the changes made during this sessio
 
 4. **Execute upon confirmation (in order):**
    - For each commit: `git add <specific files>` then `git commit`
-   - Use imperative mood in messages, focus on *why* not *what*
    - Never use `git add -A` or `git add .`
    - Show final result with `git log --oneline -n [number of commits]`
+
+## Commit message format
+
+Follow [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/) and keep messages **at most 3 lines total**.
+
+**Structure:**
+```
+<type>(<optional scope>)<!>: <description>
+
+<optional body — only if it adds non-obvious "why">
+```
+
+**Rules:**
+- **Line 1 (required):** `<type>(<scope>): <description>` — imperative mood, ≤72 chars, no trailing period
+- **Line 2:** blank (only if a body line follows)
+- **Line 3:** single body line explaining *why* (only when not obvious from the description)
+- **Hard cap: 3 lines.** If you can't say it in 3 lines, the commit is too big — split it.
+- **Breaking changes:** append `!` after type/scope (e.g. `feat(api)!: drop v1 endpoint`). Do not use a `BREAKING CHANGE:` footer — it would exceed the line cap.
+- **Allowed types:** `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`
+
+**Examples:**
+```
+fix(hooks): wrap commands in bash -c for paths with spaces
+```
+```
+feat(commit): enforce 3-line conventional commit messages
+
+Long bodies were drowning out the "why" — cap forces clarity.
+```
+```
+refactor(wizard)!: rename CLAUDE_OPC_DIR to CLAUDE_PROJECT_DIR
+```
 
 5. **Generate reasoning (after each commit):**
    - Run: `bash "$CLAUDE_CC_DIR/.claude/scripts/generate-reasoning.sh" <commit-hash> "<commit-message>"`
