@@ -76,7 +76,7 @@ refactor(wizard)!: rename CLAUDE_OPC_DIR to CLAUDE_PROJECT_DIR
 ```
 
 5. **Generate reasoning (after each commit):**
-   - Run: `bash "$CLAUDE_CC_DIR/.claude/scripts/generate-reasoning.sh" <commit-hash> "<commit-message>"`
+   - Run: `"$CLAUDE_CC_DIR/.claude/scripts/generate-reasoning.sh" <commit-hash> "<commit-message>"`
    - This captures what was tried during development (build failures, fixes)
    - The reasoning file helps future sessions understand past decisions
    - Stored in `.git/claude/commits/<hash>/reasoning.md`
