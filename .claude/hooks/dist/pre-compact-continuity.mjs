@@ -218,6 +218,7 @@ async function main() {
   const input = JSON.parse(await readStdin());
   const projectDir = process.env.CLAUDE_PROJECT_DIR || process.cwd();
   const ledgerDir = path.join(projectDir, "thoughts", "ledgers");
+  fs2.mkdirSync(ledgerDir, { recursive: true });
   const ledgerFiles = fs2.readdirSync(ledgerDir).filter((f) => f.startsWith("CONTINUITY_CLAUDE-") && f.endsWith(".md"));
   if (ledgerFiles.length === 0) {
     const output = {

@@ -20,6 +20,7 @@ async function main() {
 
   // Find existing ledger files
   const ledgerDir = path.join(projectDir, 'thoughts', 'ledgers');
+  fs.mkdirSync(ledgerDir, { recursive: true });
   const ledgerFiles = fs.readdirSync(ledgerDir)
     .filter(f => f.startsWith('CONTINUITY_CLAUDE-') && f.endsWith('.md'));
 
